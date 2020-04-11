@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "98186336113",
+    "firebase_url": "https://coval-3c340.firebaseio.com",
+    "project_id": "coval-3c340",
+    "storage_bucket": "coval-3c340.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:98186336113:android:83687ea5e879b24ece08d0",
+        "android_client_info": {
+          "package_name": "com.coval"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "98186336113-kiq7dgb2pes5drh6o0msidfhuo4ceiku.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.coval",
+            "certificate_hash": "97205c629035b9ebe872a97994e744e74164c40b"
+          }
+        },
+        {
+          "client_id": "98186336113-k1sasdbtq6pc2f9gppcm8if25kgjcv4j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDshArhqe5uVeVbDkedDcz6rBz2SvNgiCE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "98186336113-k1sasdbtq6pc2f9gppcm8if25kgjcv4j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
