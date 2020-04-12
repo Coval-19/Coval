@@ -1,30 +1,53 @@
 import 'package:coval/authenticate/validation.dart';
+import 'package:coval/services/auth_service.dart';
+import 'package:coval/services/exceptions/login_exception.dart';
 import 'package:flutter/material.dart';
 
 class LogInCard extends StatefulWidget {
   final double screenHeight;
   final Function authModeChange;
+  final Function setLoading;
+  final Function setError;
+  final Function getError;
 
-  const LogInCard({Key key, this.screenHeight, this.authModeChange})
+  const LogInCard(
+      {Key key,
+      this.screenHeight,
+      this.authModeChange,
+      this.setLoading,
+      this.setError,
+      this.getError})
       : super(key: key);
 
   @override
-  _LogInCardState createState() =>
-      _LogInCardState(screenHeight, authModeChange);
+  _LogInCardState createState() => _LogInCardState(
+      screenHeight, authModeChange, setLoading, getError, setError);
 }
 
 class _LogInCardState extends State<LogInCard> {
   final _formKey = GlobalKey<FormState>();
   final double screenHeight;
+  final authService = AuthService();
   final Function authModeChange;
+  final Function setLoading;
+  final Function setError;
+  final Function getError;
 
   String _email;
   String _password;
 
-  _LogInCardState(this.screenHeight, this.authModeChange);
+  _LogInCardState(this.screenHeight, this.authModeChange, this.setLoading,
+      this.getError, this.setError);
 
-  void onLogIn() {
+  void onLogIn() async {
     if (_formKey.currentState.validate()) {
+      setLoading(true);
+      try {
+        await authService.signIn(_email.trim(), _password.trim());
+      } on LoginException catch (e) {
+        setError(e.message);
+        setLoading(false);
+      }
       print("email:$_email, password:$_password");
     }
   }
@@ -87,6 +110,11 @@ class _LogInCardState extends State<LogInCard> {
                             _password = value;
                           });
                         }),
+                    SizedBox(height: 12.0),
+                    Text(
+                      getError(),
+                      style: TextStyle(color: Colors.red, fontSize: 14.0),
+                    ),
                     SizedBox(
                       height: 20,
                     ),

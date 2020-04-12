@@ -1,5 +1,5 @@
 String emailValidator(String value) {
-  final emailPattern = RegExp(r'^[a-zA-Z0-9]+@[a-zA-Z0-9]+');
+  final emailPattern = RegExp(r"[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$");
   if (value.isEmpty) return '*Required';
   return !emailPattern.hasMatch(value) ? '*Enter a valid email' : null;
 }

@@ -1,5 +1,6 @@
 import 'package:coval/authenticate/login_card.dart';
 import 'package:coval/authenticate/signup_card.dart';
+import 'package:coval/loading/loading.dart';
 import 'package:flutter/material.dart';
 
 enum AuthMode { LOGIN, SINGUP }
@@ -13,36 +14,65 @@ class _AuthenticateState extends State<Authenticate> {
   double screenHeight;
   AuthMode _authMode = AuthMode.LOGIN;
 
+  bool _loading = false;
+  String _error = "";
+
+  void setLoading(bool loading) {
+    setState(() {
+      _loading = loading;
+    });
+  }
+
+  void setError(String error) {
+    setState(() {
+      _error = error;
+    });
+  }
+
+  String getError() {
+    return _error;
+  }
+
   @override
   Widget build(BuildContext context) {
     screenHeight = MediaQuery.of(context).size.height;
 
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: Stack(
-          children: <Widget>[
-            lowerHalf(context),
-            upperHalf(context),
-            _authMode == AuthMode.LOGIN
-                ? LogInCard(
-                screenHeight: screenHeight,
-                authModeChange: () {
-                  setState(() {
-                    _authMode = AuthMode.SINGUP;
-                  });
-                })
-                : SignUpCard(
-                screenHeight: screenHeight,
-                authModeChange: () {
-                  setState(() {
-                    _authMode = AuthMode.LOGIN;
-                  });
-                }),
-            pageTitle(),
-          ],
-        ),
-      ),
-    );
+    return _loading
+        ? Loading()
+        : Scaffold(
+            backgroundColor: Colors.amber,
+            body: SingleChildScrollView(
+              child: Stack(
+                children: <Widget>[
+                  upperHalf(context),
+                  _authMode == AuthMode.LOGIN
+                      ? LogInCard(
+                          screenHeight: screenHeight,
+                          authModeChange: () {
+                            setState(() {
+                              _authMode = AuthMode.SINGUP;
+                              _error = "";
+                            });
+                          },
+                          setLoading: setLoading,
+                          setError: setError,
+                          getError: getError)
+                      : SignUpCard(
+                          screenHeight: screenHeight,
+                          authModeChange: () {
+                            setState(() {
+                              _authMode = AuthMode.LOGIN;
+                              _error = "";
+                            });
+                          },
+                          setLoading: setLoading,
+                          setError: setError,
+                          getError: getError),
+                  pageTitle(),
+                ],
+              ),
+            ),
+          );
   }
 
   Widget pageTitle() {
@@ -52,38 +82,13 @@ class _AuthenticateState extends State<Authenticate> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Icon(
-            Icons.whatshot,
-            size: 48,
-            color: Colors.white,
-          ),
-          Text(
-            "Coval",
-            style: TextStyle(
-                fontSize: 34, color: Colors.white, fontWeight: FontWeight.w400),
-          )
+          Image.asset("assets/coval-logo.jpeg", height: 100, width: 100),
         ],
       ),
     );
   }
 
   Widget upperHalf(BuildContext context) {
-    return Container(
-      height: screenHeight / 2,
-      child: Container(
-        height: screenHeight / 2,
-        color: Colors.blue,
-      ),
-    );
-  }
-
-  Widget lowerHalf(BuildContext context) {
-    return Align(
-      alignment: Alignment.bottomCenter,
-      child: Container(
-        height: screenHeight / 2,
-        color: Color(0xFFECF0F3),
-      ),
-    );
+    return Container(color: Colors.grey[100], height: screenHeight / 2);
   }
 }

@@ -1,33 +1,49 @@
 import 'dart:io';
 
 import 'package:coval/authenticate/validation.dart';
+import 'package:coval/services/auth_service.dart';
+import 'package:coval/services/exceptions/registration_exception.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class SignUpCard extends StatefulWidget {
   final double screenHeight;
   final Function authModeChange;
+  final Function setLoading;
+  final Function setError;
+  final Function getError;
 
-  const SignUpCard({Key key, this.screenHeight, this.authModeChange})
+  const SignUpCard(
+      {Key key,
+      this.screenHeight,
+      this.authModeChange,
+      this.setLoading,
+      this.setError,
+      this.getError})
       : super(key: key);
 
   @override
-  _SignUpCardState createState() =>
-      _SignUpCardState(screenHeight, authModeChange);
+  _SignUpCardState createState() => _SignUpCardState(
+      screenHeight, authModeChange, setLoading, setError, getError);
 }
 
 class _SignUpCardState extends State<SignUpCard> {
   final _formKey = GlobalKey<FormState>();
+  final authService = AuthService();
   final double screenHeight;
   final Function authModeChange;
+  final Function setLoading;
+  final Function setError;
+  final Function getError;
 
   File _pickedImage;
   String _name;
-  String _social_number;
+  String _socialNumber;
   String _email;
   String _password;
 
-  _SignUpCardState(this.screenHeight, this.authModeChange);
+  _SignUpCardState(this.screenHeight, this.authModeChange, this.setLoading,
+      this.setError, this.getError);
 
   void _pickImage() async {
     final imageSource = await showDialog<ImageSource>(
@@ -47,7 +63,6 @@ class _SignUpCardState extends State<SignUpCard> {
             ));
 
     if (imageSource != null) {
-      print(imageSource);
       final file = await ImagePicker.pickImage(source: imageSource);
       if (file != null) {
         setState(() => _pickedImage = file);
@@ -55,9 +70,21 @@ class _SignUpCardState extends State<SignUpCard> {
     }
   }
 
-  void onSignUp() {
+  void onSignUp() async {
+    if(_pickedImage == null) {
+      setError("Please upload an image");
+      return;
+    }
+
     if (_formKey.currentState.validate()) {
-      print("email:$_email, password:$_password, social number:$_social_number name:$_name");
+      setLoading(true);
+      try {
+        await authService.registerUser(_email.trim(), _password.trim(),
+            _name, _socialNumber, _pickedImage);
+      } on RegistrationException catch (e) {
+        setError(e.message);
+        setLoading(false);
+      }
     }
   }
 
@@ -142,7 +169,7 @@ class _SignUpCardState extends State<SignUpCard> {
                         },
                         onChanged: (value) {
                           setState(() {
-                            _social_number = value;
+                            _socialNumber = value;
                           });
                         }),
                     SizedBox(
@@ -193,6 +220,11 @@ class _SignUpCardState extends State<SignUpCard> {
                     Text(
                       "Password must be at least 8 characters and include a special character and number",
                       style: TextStyle(color: Colors.grey),
+                    ),
+                    SizedBox(height: 12.0),
+                    Text(
+                      getError(),
+                      style: TextStyle(color: Colors.red, fontSize: 14.0),
                     ),
                     SizedBox(
                       height: 7,
