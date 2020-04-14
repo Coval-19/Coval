@@ -1,83 +1,148 @@
 import 'package:coval/loading/loading.dart';
+import 'package:coval/models/user.dart';
 import 'package:coval/models/user_data.dart';
 import 'package:coval/services/auth_service.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import 'businesses/businesses_visited_list.dart';
 
 class UserProfile extends StatefulWidget {
   @override
   _UserProfileState createState() => _UserProfileState();
+
+  UserProfile({Key key}) : super(key: key);
 }
 
 class _UserProfileState extends State<UserProfile> {
+  final authService = AuthService();
+  int placesVisited = 0;
 
-  final AuthService authService = AuthService();
+  void updatePlacesVisited(int placesVisited) {
+    if(this.placesVisited != placesVisited) {
+      setState(() {
+        this.placesVisited = placesVisited;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<User>(context);
     final UserData userData = Provider.of<UserData>(context) ?? null;
 
     return userData == null
         ? Loading()
-        : Scaffold(
-            appBar: AppBar(
-              actions: <Widget>[
-                FlatButton.icon(
-                  icon: Icon(Icons.person),
-                  label: Text('logout'),
-                  onPressed: authService.signOut,
-                )
-              ],
-            ),
-            body: Container(
-              child: Column(
-                children: [
-                  Container(
-                    color: Colors.grey.shade200,
-                    child: Row(
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Hero(
-                            tag: "user",
-                            child: Container(
-                              height: 96.0,
-                              width: 96.0,
-                              decoration: BoxDecoration(
-                                image: DecorationImage(
-                                  image: NetworkImage(userData.imageUrl),
-                                  fit: BoxFit.cover,
-                                ),
-                                borderRadius: BorderRadius.circular(80.0),
-                                border: Border.all(
-                                  color: Colors.white,
-                                  width: 5.0,
-                                ),
-                              ),
+        : SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                SizedBox(height: 80.0),
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Text(
+                    "Stay Safe ${userData.name.split(" ")[0]}!",
+                    style:
+                        TextStyle(fontSize: 30.0, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Card(
+                    elevation: 0.0,
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text(userData.name,
+                                    style: TextStyle(
+                                        fontSize: 20.0,
+                                        fontWeight: FontWeight.bold)),
+                                SizedBox(height: 25.0),
+                                Text("$placesVisited"),
+                                Text("places visited"),
+                              ],
                             ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: <Widget>[
+                                CircleAvatar(
+                                  radius: 40.0,
+                                  backgroundImage:
+                                      NetworkImage(userData.imageUrl),
+                                ),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    )),
+                Card(
+                    elevation: 0.0,
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[
+                          Text("Places Visited",
+                              textAlign: TextAlign.start,
+                              style: TextStyle(
+                                  fontSize: 20.0, fontWeight: FontWeight.bold)),
+                          SizedBox(height: 10.0),
+                          Container(height:200.0,
+                              child: BusinessesVisitedList(user: user, updateFunction: updatePlacesVisited,))
+                        ],
+                      ),
+                    ),
+                  ),
+                Card(
+                  elevation: 0.0,
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        Text("Settings",
+                            textAlign: TextAlign.start,
+                            style: TextStyle(
+                                fontSize: 20.0, fontWeight: FontWeight.bold)),
+                        SizedBox(height: 10.0),
+                        GestureDetector(
+                          onTap: authService.signOut,
+                          child: Row(
                             children: <Widget>[
-                              Text(
-                                userData.name,
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 20.0,
-                                  fontWeight: FontWeight.w600,
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Text("Log out",
+                                        style: TextStyle(fontSize: 15.0)),
+                                  ],
                                 ),
                               ),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: <Widget>[
+                                    Icon(Icons.arrow_forward_ios),
+                                  ],
+                                ),
+                              )
                             ],
                           ),
                         )
                       ],
                     ),
-                  )
-                ],
-              ),
-            ));
+                  ),
+                )
+              ],
+            ),
+          );
   }
 }

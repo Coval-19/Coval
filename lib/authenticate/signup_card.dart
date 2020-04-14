@@ -63,7 +63,8 @@ class _SignUpCardState extends State<SignUpCard> {
             ));
 
     if (imageSource != null) {
-      final file = await ImagePicker.pickImage(source: imageSource);
+      final file =
+          await ImagePicker.pickImage(source: imageSource, imageQuality: 85);
       if (file != null) {
         setState(() => _pickedImage = file);
       }
@@ -71,7 +72,7 @@ class _SignUpCardState extends State<SignUpCard> {
   }
 
   void onSignUp() async {
-    if(_pickedImage == null) {
+    if (_pickedImage == null) {
       setError("Please upload an image");
       return;
     }
@@ -79,8 +80,8 @@ class _SignUpCardState extends State<SignUpCard> {
     if (_formKey.currentState.validate()) {
       setLoading(true);
       try {
-        await authService.registerUser(_email.trim(), _password.trim(),
-            _name, _socialNumber, _pickedImage);
+        await authService.registerUser(_email.trim(), _password.trim(), _name,
+            _socialNumber, _pickedImage);
       } on RegistrationException catch (e) {
         setError(e.message);
         setLoading(false);

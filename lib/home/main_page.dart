@@ -1,0 +1,61 @@
+import 'package:coval/home/map_page.dart';
+import 'package:coval/home/user_profile.dart';
+import 'package:coval/home/welcome_page.dart';
+import 'package:flutter/material.dart';
+
+import 'businesses/businesses_list.dart';
+
+class MainPage extends StatefulWidget {
+  @override
+  _MainPageState createState() => _MainPageState();
+}
+
+class _MainPageState extends State<MainPage> {
+  final List<Widget> pages = [
+    WelcomePage(key: PageStorageKey('WelcomePage'),),
+    BusinessesList(),
+    MapPage(key: PageStorageKey('MapPage'),),
+    UserProfile(key: PageStorageKey('UserProfile'),)
+  ];
+
+  int _currentIndex = 0;
+
+  void onTabTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: IndexedStack(
+        index: _currentIndex,
+        children: pages,
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        onTap: onTabTapped, // new
+        currentIndex: _currentIndex, // new
+        items: [
+          new BottomNavigationBarItem(
+              backgroundColor: Colors.blue,
+              icon: Icon(Icons.home),
+              title: Text("Home")),
+          new BottomNavigationBarItem(
+              backgroundColor: Colors.blue,
+              icon: Icon(Icons.search),
+              title: Text("Search")),
+          new BottomNavigationBarItem(
+              backgroundColor: Colors.blue,
+              icon: Icon(Icons.map),
+              title: Text("Map")),
+          new BottomNavigationBarItem(
+              backgroundColor: Colors.blue,
+              icon: Icon(Icons.person),
+              title: Text("Profile"))
+        ],
+      ),
+    );
+  }
+}
