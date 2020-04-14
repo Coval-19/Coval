@@ -1,52 +1,31 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:coval/models/user.dart';
+import 'package:coval/models/business_visit.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class BusinessesVisitedList extends StatelessWidget {
-  final User user;
-  final Function updateFunction;
+  final List<BusinessVisit> placesVisited;
 
-  const BusinessesVisitedList({Key key, this.user, this.updateFunction}) : super(key: key);
+  const BusinessesVisitedList({Key key, this.placesVisited}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: Firestore.instance
-          .collection('users')
-          .document(user.uid)
-          .collection("responses")
-          .snapshots(),
-      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (snapshot.hasError) return Text('Error: ${snapshot.error}');
-        switch (snapshot.connectionState) {
-          case ConnectionState.waiting:
-            return Text('Loading...');
-          default:
-            updateFunction(snapshot.data.documents.length);
-            List<ListTile> tiles = snapshot.data.documents.length > 0
-                ? snapshot.data.documents.map((DocumentSnapshot document) {
-                  Timestamp timestamp = document['timestamp'];
-                    return ListTile(
-                      title: Text(document['businessName']),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(document['businessAddress']),
-                          Text(DateFormat.yMMMd().add_jm().format(DateTime.parse(timestamp.toDate().toString())).toString())
-                        ],
-                      ),
-                    );
-                  }).toList()
-                : [];
-            return ListView(
-              shrinkWrap: true,
-              physics: AlwaysScrollableScrollPhysics(),
-              children: tiles,
+    List<ListTile> tiles = placesVisited.length > 0
+        ? placesVisited.map((BusinessVisit businessVisit) {
+            return ListTile(
+              title: Text(businessVisit.name),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(businessVisit.address),
+                  Text(businessVisit.timeStamp)
+                ],
+              ),
             );
-            Text("Didnt visit anywhere yet");
-        }
-      },
+          }).toList()
+        : [];
+    return ListView(
+      shrinkWrap: true,
+      physics: AlwaysScrollableScrollPhysics(),
+      children: tiles,
     );
   }
 }

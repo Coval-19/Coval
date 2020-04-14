@@ -1,14 +1,14 @@
 import 'package:coval/loading/loading.dart';
+import 'package:coval/models/business_data.dart';
 import 'package:coval/services/businesses_data_service.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:provider/provider.dart';
 
 class MapPage extends StatefulWidget {
   @override
   _MapPageState createState() => _MapPageState();
-
-  MapPage({Key key}) : super(key: key);
 }
 
 class _MapPageState extends State<MapPage> {
@@ -16,12 +16,10 @@ class _MapPageState extends State<MapPage> {
 
   GoogleMapController mapController;
   Position position;
-  Set<Marker> markers;
 
   @override
   void initState() {
     getCurrentLocation();
-    getMarkers();
     super.initState();
   }
 
@@ -38,28 +36,26 @@ class _MapPageState extends State<MapPage> {
     });
   }
 
-  void getMarkers() async {
-    Set<Marker> markersSet =
-        await businessesDataService.getBusinesses().then((businesses) {
-      return businesses.map((business) {
-        return Marker(
-            position: business.coordinates,
-            icon:
-                BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
-            markerId: MarkerId(business.uid),
-            infoWindow: InfoWindow(
-              title: business.name,
-            ));
-      }).toSet();
-    });
-    setState(() {
-      markers = markersSet;
-    });
+  Marker getMarker(BusinessData businessData) {
+    return Marker(
+        position: businessData.coordinates,
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
+        markerId: MarkerId(businessData.uid),
+        infoWindow: InfoWindow(
+          title: businessData.name,
+          snippet: businessData.address,
+        ));
   }
 
   @override
   Widget build(BuildContext context) {
-    return position == null ? Loading(): GoogleMap(
+    final businesses = Provider.of<List<BusinessData>>(context);
+    Set<Marker> markers = businesses.length > 0
+        ? businesses.map(getMarker).toSet()
+        : Set();
+    return position == null
+        ? Loading()
+        : GoogleMap(
             mapType: MapType.normal,
             markers: markers,
             myLocationEnabled: true,

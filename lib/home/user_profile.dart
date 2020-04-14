@@ -1,4 +1,5 @@
 import 'package:coval/loading/loading.dart';
+import 'package:coval/models/business_visit.dart';
 import 'package:coval/models/user.dart';
 import 'package:coval/models/user_data.dart';
 import 'package:coval/services/auth_service.dart';
@@ -11,26 +12,15 @@ import 'businesses/businesses_visited_list.dart';
 class UserProfile extends StatefulWidget {
   @override
   _UserProfileState createState() => _UserProfileState();
-
-  UserProfile({Key key}) : super(key: key);
 }
 
 class _UserProfileState extends State<UserProfile> {
   final authService = AuthService();
-  int placesVisited = 0;
-
-  void updatePlacesVisited(int placesVisited) {
-    if(this.placesVisited != placesVisited) {
-      setState(() {
-        this.placesVisited = placesVisited;
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<User>(context);
     final UserData userData = Provider.of<UserData>(context) ?? null;
+    final List<BusinessVisit> placesVisited = Provider.of<List<BusinessVisit>>(context);
 
     return userData == null
         ? Loading()
@@ -63,7 +53,7 @@ class _UserProfileState extends State<UserProfile> {
                                         fontSize: 20.0,
                                         fontWeight: FontWeight.bold)),
                                 SizedBox(height: 25.0),
-                                Text("$placesVisited"),
+                                Text("${placesVisited.length}"),
                                 Text("places visited"),
                               ],
                             ),
@@ -96,7 +86,7 @@ class _UserProfileState extends State<UserProfile> {
                                   fontSize: 20.0, fontWeight: FontWeight.bold)),
                           SizedBox(height: 10.0),
                           Container(height:200.0,
-                              child: BusinessesVisitedList(user: user, updateFunction: updatePlacesVisited,))
+                              child: BusinessesVisitedList(placesVisited: placesVisited,))
                         ],
                       ),
                     ),

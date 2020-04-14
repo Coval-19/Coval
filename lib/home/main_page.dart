@@ -12,10 +12,10 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   final List<Widget> pages = [
-    WelcomePage(key: PageStorageKey('WelcomePage'),),
+    WelcomePage(),
     BusinessesList(),
-    MapPage(key: PageStorageKey('MapPage'),),
-    UserProfile(key: PageStorageKey('UserProfile'),)
+    MapPage(),
+    UserProfile()
   ];
 
   int _currentIndex = 0;
