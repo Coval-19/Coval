@@ -40,35 +40,37 @@ class _AuthenticateState extends State<Authenticate> {
     return _loading
         ? Loading()
         : Scaffold(
-            backgroundColor: Colors.amber,
+            backgroundColor: Colors.white,
             body: SingleChildScrollView(
               child: Stack(
                 children: <Widget>[
                   upperHalf(context),
-                  _authMode == AuthMode.LOGIN
-                      ? LogInCard(
-                          screenHeight: screenHeight,
-                          authModeChange: () {
-                            setState(() {
-                              _authMode = AuthMode.SINGUP;
-                              _error = "";
-                            });
-                          },
-                          setLoading: setLoading,
-                          setError: setError,
-                          getError: getError)
-                      : SignUpCard(
-                          screenHeight: screenHeight,
-                          authModeChange: () {
-                            setState(() {
-                              _authMode = AuthMode.LOGIN;
-                              _error = "";
-                            });
-                          },
-                          setLoading: setLoading,
-                          setError: setError,
-                          getError: getError),
-                  pageTitle(),
+                  Column(
+                    children: <Widget>[
+                      pageTitle(),
+                      _authMode == AuthMode.LOGIN
+                          ? LogInCard(
+                              authModeChange: () {
+                                setState(() {
+                                  _authMode = AuthMode.SINGUP;
+                                  _error = "";
+                                });
+                              },
+                              setLoading: setLoading,
+                              setError: setError,
+                              getError: getError)
+                          : SignUpCard(
+                              authModeChange: () {
+                                setState(() {
+                                  _authMode = AuthMode.LOGIN;
+                                  _error = "";
+                                });
+                              },
+                              setLoading: setLoading,
+                              setError: setError,
+                              getError: getError),
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -82,13 +84,13 @@ class _AuthenticateState extends State<Authenticate> {
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Image.asset("assets/coval-logo.jpeg", height: 100, width: 100),
+          Image.asset("assets/coval-logo.png", height: 200, width: 200),
         ],
       ),
     );
   }
 
   Widget upperHalf(BuildContext context) {
-    return Container(color: Colors.grey[100], height: screenHeight / 2);
+    return Container(color: Color(4278501120), height: screenHeight / 2);
   }
 }

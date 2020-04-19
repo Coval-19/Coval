@@ -6,10 +6,10 @@ class BusinessesDataService {
       Firestore.instance.collection('businesses');
 
   Stream<List<BusinessData>> streamBusinesses() {
-    return _businessesCollection.snapshots().map((snapshot) {
-      return snapshot.documents
-          .map((doc) => BusinessData.fromFireStore(doc))
-          .toList();
+    return _businessesCollection.snapshots().asyncMap((snapshot) {
+      return snapshot.documents.map((doc) {
+        return BusinessData.fromFireStore(doc);
+      }).toList();
     });
   }
 }

@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class SignUpCard extends StatefulWidget {
-  final double screenHeight;
   final Function authModeChange;
   final Function setLoading;
   final Function setError;
@@ -15,7 +14,6 @@ class SignUpCard extends StatefulWidget {
 
   const SignUpCard(
       {Key key,
-      this.screenHeight,
       this.authModeChange,
       this.setLoading,
       this.setError,
@@ -23,14 +21,13 @@ class SignUpCard extends StatefulWidget {
       : super(key: key);
 
   @override
-  _SignUpCardState createState() => _SignUpCardState(
-      screenHeight, authModeChange, setLoading, setError, getError);
+  _SignUpCardState createState() =>
+      _SignUpCardState(authModeChange, setLoading, setError, getError);
 }
 
 class _SignUpCardState extends State<SignUpCard> {
   final _formKey = GlobalKey<FormState>();
   final authService = AuthService();
-  final double screenHeight;
   final Function authModeChange;
   final Function setLoading;
   final Function setError;
@@ -42,8 +39,8 @@ class _SignUpCardState extends State<SignUpCard> {
   String _email;
   String _password;
 
-  _SignUpCardState(this.screenHeight, this.authModeChange, this.setLoading,
-      this.setError, this.getError);
+  _SignUpCardState(
+      this.authModeChange, this.setLoading, this.setError, this.getError);
 
   void _pickImage() async {
     final imageSource = await showDialog<ImageSource>(
@@ -94,7 +91,6 @@ class _SignUpCardState extends State<SignUpCard> {
     return Column(
       children: <Widget>[
         Container(
-          margin: EdgeInsets.only(top: screenHeight / 5),
           padding: EdgeInsets.only(left: 10, right: 10),
           child: Card(
             shape: RoundedRectangleBorder(

@@ -1,10 +1,13 @@
 import 'package:coval/loading/loading.dart';
 import 'package:coval/models/business_data.dart';
+import 'package:coval/models/user_data.dart';
 import 'package:coval/services/businesses_data_service.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
+
+import 'businesses/business_page.dart';
 
 class MapPage extends StatefulWidget {
   @override
@@ -16,6 +19,7 @@ class _MapPageState extends State<MapPage> {
 
   GoogleMapController mapController;
   Position position;
+  UserData userData;
 
   @override
   void initState() {
@@ -42,6 +46,13 @@ class _MapPageState extends State<MapPage> {
         icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
         markerId: MarkerId(businessData.uid),
         infoWindow: InfoWindow(
+          onTap: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        BusinessPage(businessData: businessData, userData: userData,)));
+          },
           title: businessData.name,
           snippet: businessData.address,
         ));
@@ -49,10 +60,10 @@ class _MapPageState extends State<MapPage> {
 
   @override
   Widget build(BuildContext context) {
+    userData = Provider.of<UserData>(context) ?? null;
     final businesses = Provider.of<List<BusinessData>>(context);
-    Set<Marker> markers = businesses.length > 0
-        ? businesses.map(getMarker).toSet()
-        : Set();
+    Set<Marker> markers =
+        businesses.length > 0 ? businesses.map(getMarker).toSet() : Set();
     return position == null
         ? Loading()
         : GoogleMap(

@@ -1,5 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:coval/models/business_data.dart';
+import 'package:coval/models/user_data.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'business_page.dart';
 
 class BusinessesList extends StatefulWidget {
   @override
@@ -8,56 +12,60 @@ class BusinessesList extends StatefulWidget {
 
 class _BusinessesListState extends State<BusinessesList> {
   TextEditingController controller = new TextEditingController();
+  UserData userData;
   String filter = "";
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: Firestore.instance.collection('businesses').snapshots(),
-      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (snapshot.hasError) return new Text('Error: ${snapshot.error}');
-        switch (snapshot.connectionState) {
-          case ConnectionState.waiting:
-            return new Text('Loading...');
-          default:
-            return Column(
-              children: <Widget>[
-                SizedBox(height: 40.0),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextField(
-                    onSubmitted: (value) {
-                      setState(() {
-                        filter = value;
-                      });
-                    },
-                    controller: controller,
-                    decoration: InputDecoration(
-                        labelText: "Search",
-                        hintText: "Search",
-                        prefixIcon: Icon(Icons.search),
-                        border: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(25.0)))),
-                  ),
-                ),
-                Expanded(
-                  child: new ListView(
-                    shrinkWrap: true,
-                    children: snapshot.data.documents.where((document) {
-                      return document['name'].toLowerCase().contains(filter.toLowerCase());
-                    }).map((DocumentSnapshot document) {
-                      return new ListTile(
-                        title: new Text(document['name']),
-                        subtitle: new Text(document['address']),
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ],
+    userData = Provider.of<UserData>(context) ?? null;
+    final businesses = Provider.of<List<BusinessData>>(context);
+    List<Widget> tiles = businesses.length > 0
+        ? businesses.where((business) {
+            return business.name.toLowerCase().contains(filter.toLowerCase());
+          }).map((business) {
+            return GestureDetector(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            BusinessPage(businessData: business, userData: userData,)));
+              },
+              child: ListTile(
+                title: Text(business.name),
+                subtitle: Text(business.address),
+              ),
             );
-        }
-      },
+          }).toList()
+        : [];
+    return SafeArea(
+      child: Column(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              onSubmitted: (value) {
+                setState(() {
+                  filter = value;
+                });
+              },
+              controller: controller,
+              decoration: InputDecoration(
+                  labelText: "Search",
+                  hintText: "Search",
+                  prefixIcon: Icon(Icons.search),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(25.0)))),
+            ),
+          ),
+          Expanded(
+            child: ListView(
+              shrinkWrap: true,
+              children: tiles,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

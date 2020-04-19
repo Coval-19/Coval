@@ -6,8 +6,9 @@ class BusinessData {
   final String address;
   final LatLng coordinates;
   final String name;
+  final String description;
 
-  BusinessData(this.uid, this.address, this.coordinates, this.name);
+  BusinessData(this.uid, this.address, this.coordinates, this.name, this.description);
 
   factory BusinessData.fromFireStore(DocumentSnapshot documentSnapshot) {
     GeoPoint point = documentSnapshot.data["addressCoordinates"];
@@ -15,7 +16,8 @@ class BusinessData {
         documentSnapshot.documentID,
         documentSnapshot.data["address"],
         LatLng(point.latitude, point.longitude),
-        documentSnapshot.data["name"]
+        documentSnapshot.data["name"],
+        documentSnapshot.data["description"]
     );
   }
 }

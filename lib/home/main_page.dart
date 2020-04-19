@@ -39,19 +39,19 @@ class _MainPageState extends State<MainPage> {
         currentIndex: _currentIndex, // new
         items: [
           new BottomNavigationBarItem(
-              backgroundColor: Colors.blue,
+              backgroundColor: Color(4278501120),
               icon: Icon(Icons.home),
               title: Text("Home")),
           new BottomNavigationBarItem(
-              backgroundColor: Colors.blue,
+              backgroundColor: Color(4278501120),
               icon: Icon(Icons.search),
               title: Text("Search")),
           new BottomNavigationBarItem(
-              backgroundColor: Colors.blue,
+              backgroundColor: Color(4278501120),
               icon: Icon(Icons.map),
               title: Text("Map")),
           new BottomNavigationBarItem(
-              backgroundColor: Colors.blue,
+              backgroundColor: Color(4278501120),
               icon: Icon(Icons.person),
               title: Text("Profile"))
         ],

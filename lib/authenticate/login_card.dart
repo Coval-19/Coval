@@ -4,7 +4,6 @@ import 'package:coval/services/exceptions/login_exception.dart';
 import 'package:flutter/material.dart';
 
 class LogInCard extends StatefulWidget {
-  final double screenHeight;
   final Function authModeChange;
   final Function setLoading;
   final Function setError;
@@ -12,7 +11,6 @@ class LogInCard extends StatefulWidget {
 
   const LogInCard(
       {Key key,
-      this.screenHeight,
       this.authModeChange,
       this.setLoading,
       this.setError,
@@ -20,13 +18,12 @@ class LogInCard extends StatefulWidget {
       : super(key: key);
 
   @override
-  _LogInCardState createState() => _LogInCardState(
-      screenHeight, authModeChange, setLoading, getError, setError);
+  _LogInCardState createState() =>
+      _LogInCardState(authModeChange, setLoading, getError, setError);
 }
 
 class _LogInCardState extends State<LogInCard> {
   final _formKey = GlobalKey<FormState>();
-  final double screenHeight;
   final authService = AuthService();
   final Function authModeChange;
   final Function setLoading;
@@ -36,8 +33,8 @@ class _LogInCardState extends State<LogInCard> {
   String _email;
   String _password;
 
-  _LogInCardState(this.screenHeight, this.authModeChange, this.setLoading,
-      this.getError, this.setError);
+  _LogInCardState(
+      this.authModeChange, this.setLoading, this.getError, this.setError);
 
   void onLogIn() async {
     if (_formKey.currentState.validate()) {
@@ -57,7 +54,6 @@ class _LogInCardState extends State<LogInCard> {
     return Column(
       children: <Widget>[
         Container(
-          margin: EdgeInsets.only(top: screenHeight / 4),
           padding: EdgeInsets.only(left: 10, right: 10),
           child: Card(
             shape: RoundedRectangleBorder(
